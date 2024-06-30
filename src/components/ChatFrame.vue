@@ -8,6 +8,8 @@ export interface ChatMessage {
   id: number
 }
 
+const CURRENT_USER_NAME = 'Alice'
+
 const first_message: ChatMessage = {
   username: 'Alice',
   message: 'First example message',
@@ -18,14 +20,32 @@ const second_message: ChatMessage = {
   message: 'Second example message',
   id: 3,
 }
+const third_message: ChatMessage = {
+  username: 'Alice',
+  message: 'Another example message',
+  id: 4,
+}
 
 const messages: Ref<Array<ChatMessage>> = ref([first_message])
 
-messages.value.push(second_message)
+messages.value.push(second_message, third_message)
 </script>
 
 <template>
-  <div>
-    <ChatMessageBubble v-for="message in messages" :key="message.id" :message="message" />
-  </div>
+  <ul>
+    <ChatMessageBubble
+      v-for="message in messages"
+      :key="message.id"
+      :message="message"
+      :is_current_user="message.username == CURRENT_USER_NAME"
+    />
+  </ul>
 </template>
+
+<style scoped>
+ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+</style>
