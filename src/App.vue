@@ -6,6 +6,8 @@ import ChatFrame from './components/ChatFrame.vue'
   <header><h1>Skychat</h1></header>
 
   <main>
-    <ChatFrame />
+    <Suspense>
+      <ChatFrame />
+    </Suspense>
   </main>
 </template>
