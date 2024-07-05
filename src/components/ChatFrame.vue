@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, type Ref } from 'vue'
+import { onMounted, ref, type Ref } from 'vue'
 import ChatMessageBubble from './ChatMessageBubble.vue'
 import {
   postMessageToApi,
@@ -28,16 +28,23 @@ await postMessageToApi({
 const messages: Ref<Array<ChatMessage>> = ref([])
 const retrievedMessages = await getMessagesFromApi()
 messages.value = retrievedMessages
+
+const messageRefs = ref<Array<HTMLInputElement>>([])
+onMounted(async () => {
+  const lastElement = messageRefs.value[messageRefs.value.length - 1]
+  console.log(lastElement)
+  lastElement.scrollIntoView()
+})
 </script>
 
 <template>
   <ul>
-    <ChatMessageBubble
-      v-for="message in messages"
-      :key="message.id"
-      :message="message"
-      :is_current_user="message.username == CURRENT_USER_NAME"
-    />
+    <li v-for="message in messages" ref="messageRefs" :key="message.id">
+      <ChatMessageBubble
+        :message="message"
+        :is_current_user="message.username == CURRENT_USER_NAME"
+      />
+    </li>
   </ul>
 </template>
 
@@ -46,5 +53,12 @@ ul {
   list-style: none;
   margin: 0;
   padding: 0;
+}
+
+li {
+  display: list-item;
+  clear: both;
+  padding: 5px;
+  font-family: Helvetica, Arial, sans-serif;
 }
 </style>

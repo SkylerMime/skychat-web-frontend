@@ -8,20 +8,11 @@ defineProps<{
 </script>
 
 <template>
-  <li>
-    <p class="name" :class="{ right_side: is_current_user }">{{ message.username }}</p>
-    <p class="text" :class="{ green: is_current_user }">{{ message.message }}</p>
-  </li>
+  <p class="name" :class="{ right_side: is_current_user }">{{ message.username }}</p>
+  <p class="text" :class="{ green: is_current_user }">{{ message.message }}</p>
 </template>
 
 <style scoped>
-li {
-  display: list-item;
-  clear: both;
-  padding: 5px;
-  font-family: Helvetica, Arial, sans-serif;
-}
-
 .name {
   float: left;
 }
