@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { type ChatMessage } from './ChatFrame.vue'
+import { type ChatMessage } from '../api_helpers'
 
 defineProps<{
   message: ChatMessage
