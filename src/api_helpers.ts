@@ -1,17 +1,13 @@
-const API_URL = 'http://127.0.0.1:8000'
+export const API_URL = 'http://127.0.0.1:8000'
 export const CURRENT_USER_NAME = 'Alice'
-
-// TODO: Include timestamp for message ordering
 
 export interface ChatMessage {
   username: string
   message: string
-  datetime: string
+  datetime: Date
 }
 
-// TODO: Implement CORS rather than ignoring
-
-export async function getMessagesFromApi() {
+export async function getAllPastMessagesFromApi() {
   const response = await fetch(`${API_URL}/messages-handler`, {
     mode: 'cors',
   })

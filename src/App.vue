@@ -9,7 +9,7 @@ async function sendMessage() {
   const new_message: ChatMessage = {
     username: CURRENT_USER_NAME,
     message: message.value,
-    datetime: Date(),
+    datetime: new Date(),
   }
   message.value = ''
   // TODO: I think there's some way to disable the button until processing completes

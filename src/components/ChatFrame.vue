@@ -2,31 +2,15 @@
 import { onMounted, ref, type Ref } from 'vue'
 import ChatMessageBubble from './ChatMessageBubble.vue'
 import {
-  postMessageToApi,
-  getMessagesFromApi,
+  API_URL,
+  getAllPastMessagesFromApi,
   CURRENT_USER_NAME,
   type ChatMessage,
 } from '../api_helpers'
 
-await postMessageToApi({
-  username: 'Alice',
-  message: 'First example message',
-  datetime: 'Tue Aug 19 1975 23:15:30 GMT+0200 (PDT)',
-})
-await postMessageToApi({
-  username: 'Bob',
-  message: 'Second example message',
-  datetime: 'Wed Aug 20 1975 23:15:30 GMT+0200 (PDT)',
-})
-await postMessageToApi({
-  username: 'Alice',
-  message: 'Another example message',
-  datetime: 'Thu Aug 21 1975 23:15:30 GMT+0200 (PDT)',
-})
-
 // TODO: Rework to use Web Sockets instead of Suspense and async Fetch
 const messages: Ref<Array<ChatMessage>> = ref([])
-const retrievedMessages = await getMessagesFromApi()
+const retrievedMessages = await getAllPastMessagesFromApi()
 messages.value = retrievedMessages
 
 function orderMessagesByDate() {
@@ -47,15 +31,22 @@ function orderMessagesByDate() {
 const messageRefs = ref<Array<HTMLInputElement>>([])
 onMounted(async () => {
   orderMessagesByDate()
-  const lastElement = messageRefs.value[messageRefs.value.length - 1]
-  console.log(lastElement)
-  lastElement.scrollIntoView()
+  if (messageRefs.value.length > 0) {
+    const lastElement = messageRefs.value[messageRefs.value.length - 1]
+    lastElement.scrollIntoView()
+  }
 })
+
+// // Set up socket to receive additional messages
+// const messagesStream = new WebSocket(`wss://${API_URL}/messages-stream`)
+// messagesStream.onmessage = (newMessageEvent) => {
+//   messages.value.push(newMessageEvent.data)
+// }
 </script>
 
 <template>
   <ul>
-    <li v-for="message in messages" ref="messageRefs" :key="message.datetime">
+    <li v-for="message in messages" ref="messageRefs" :key="message.datetime.toString">
       <ChatMessageBubble
         :message="message"
         :is_current_user="message.username == CURRENT_USER_NAME"
