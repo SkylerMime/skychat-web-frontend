@@ -6,7 +6,7 @@ export const CURRENT_USER_NAME = 'Alice'
 export interface ChatMessage {
   username: string
   message: string
-  id: string
+  datetime: string
 }
 
 // TODO: Implement CORS rather than ignoring

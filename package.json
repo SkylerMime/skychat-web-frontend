@@ -14,7 +14,6 @@
     "format": "prettier --write src/"
   },
   "dependencies": {
-    "nanoid": "^5.0.7",
     "vue": "^3.4.29"
   },
   "devDependencies": {

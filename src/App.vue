@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import ChatFrame from './components/ChatFrame.vue'
 import { ref } from 'vue'
-import { nanoid } from 'nanoid'
 import { postMessageToApi, type ChatMessage, CURRENT_USER_NAME } from './api_helpers'
 
 const message = ref('')
@@ -10,7 +9,7 @@ async function sendMessage() {
   const new_message: ChatMessage = {
     username: CURRENT_USER_NAME,
     message: message.value,
-    id: nanoid(),
+    datetime: Date(),
   }
   message.value = ''
   // TODO: I think there's some way to disable the button until processing completes
