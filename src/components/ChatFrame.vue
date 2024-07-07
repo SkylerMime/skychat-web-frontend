@@ -37,11 +37,12 @@ onMounted(async () => {
   }
 })
 
-// // Set up socket to receive additional messages
-// const messagesStream = new WebSocket(`wss://${API_URL}/messages-stream`)
-// messagesStream.onmessage = (newMessageEvent) => {
-//   messages.value.push(newMessageEvent.data)
-// }
+// Set up socket to receive additional messages
+const messagesStream = new WebSocket(`${API_URL}/messages-stream`)
+messagesStream.onmessage = (newMessageEvent) => {
+  const newMessage = JSON.parse(newMessageEvent.data)
+  messages.value.push(newMessage)
+}
 </script>
 
 <template>

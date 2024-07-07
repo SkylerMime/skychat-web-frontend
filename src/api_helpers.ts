@@ -1,4 +1,5 @@
-export const API_URL = 'http://127.0.0.1:8000'
+export const API_IP = '127.0.0.1:8000'
+export const API_URL = `http://${API_IP}`
 export const CURRENT_USER_NAME = 'Alice'
 
 export interface ChatMessage {
