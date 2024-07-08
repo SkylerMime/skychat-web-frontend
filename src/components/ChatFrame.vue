@@ -1,13 +1,25 @@
 <script setup lang="ts">
-import { onMounted, ref, type Ref } from 'vue'
+import { onMounted, watch, ref, type Ref } from 'vue'
 import ChatMessageBubble from './ChatMessageBubble.vue'
 import { API_URL, getAllPastMessagesFromApi, type ChatMessage } from '../api_helpers'
 
 defineProps({ currentUsername: String })
 
+const emit = defineEmits<{
+  scrollSuggestion: [newMessage: HTMLInputElement, forceScroll?: boolean]
+}>()
+
 const messages: Ref<Array<ChatMessage>> = ref([])
 const retrievedMessages = await getAllPastMessagesFromApi()
 messages.value = retrievedMessages
+const messageRefs = ref<Array<HTMLInputElement>>([])
+
+// Set up socket to receive additional messages from server
+const messagesStream = new WebSocket(`${API_URL}/messages-stream`)
+messagesStream.onmessage = (newMessageEvent) => {
+  const newMessage = JSON.parse(newMessageEvent.data)
+  messages.value.push(newMessage)
+}
 
 function orderMessagesByDate() {
   function compareDateStrings(a: ChatMessage, b: ChatMessage) {
@@ -24,21 +36,29 @@ function orderMessagesByDate() {
   messages.value.sort(compareDateStrings)
 }
 
-const messageRefs = ref<Array<HTMLInputElement>>([])
-onMounted(async () => {
-  orderMessagesByDate()
+function getLastElement() {
   if (messageRefs.value.length > 0) {
-    const lastElement = messageRefs.value[messageRefs.value.length - 1]
-    lastElement.scrollIntoView()
+    return messageRefs.value[messageRefs.value.length - 1]
+  }
+}
+
+onMounted(() => {
+  orderMessagesByDate()
+  const lastElement = getLastElement()
+  if (lastElement) {
+    emit('scrollSuggestion', lastElement, true)
+  } else {
+    console.log('ERROR: Could not getLastElement in ChatFrame.vue')
   }
 })
 
-// Set up socket to receive additional messages
-const messagesStream = new WebSocket(`${API_URL}/messages-stream`)
-messagesStream.onmessage = (newMessageEvent) => {
-  const newMessage = JSON.parse(newMessageEvent.data)
-  messages.value.push(newMessage)
-}
+watch(messageRefs.value, () => {
+  console.log('Observed messageRefs update')
+  const lastElement = getLastElement()
+  if (lastElement) {
+    emit('scrollSuggestion', lastElement)
+  }
+})
 </script>
 
 <template>

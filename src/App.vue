@@ -5,17 +5,47 @@ import { postMessageToApi, type ChatMessage } from './api_helpers'
 
 const message = ref('')
 const username = ref('Alice')
+const scrollableChat = ref<HTMLDivElement>()
+
+// scrollBottom on my test screen is "75", so this is a good threshold
+const AUTO_SCROLL_THRESHOLD = 150
 
 async function sendMessage() {
-  const new_message: ChatMessage = {
-    username: username.value,
-    message: message.value,
-    datetime: new Date(),
+  if (message.value && username.value) {
+    const new_message: ChatMessage = {
+      username: username.value,
+      message: message.value,
+      datetime: new Date(),
+    }
+    message.value = ''
+    // TODO: I think there's some way to disable the button until processing completes
+    const response = await postMessageToApi(new_message)
+    console.log(response.body)
   }
-  message.value = ''
-  // TODO: I think there's some way to disable the button until processing completes
-  const response = await postMessageToApi(new_message)
-  console.log(response.body)
+}
+
+function scrollIfCloseToBottom(element: HTMLInputElement) {
+  function getScrollBottom(scrollHeight: number, clientHeight: number, scrollTop: number) {
+    return scrollHeight - (clientHeight + scrollTop)
+  }
+  if (
+    scrollableChat.value &&
+    getScrollBottom(
+      scrollableChat.value.scrollHeight,
+      scrollableChat.value.clientHeight,
+      scrollableChat.value.scrollTop
+    ) <= AUTO_SCROLL_THRESHOLD
+  ) {
+    element.scrollIntoView()
+  }
+}
+
+function checkScroll(element: HTMLInputElement, forceScroll?: boolean) {
+  if (forceScroll) {
+    element.scrollIntoView()
+  } else {
+    scrollIfCloseToBottom(element)
+  }
 }
 </script>
 
@@ -27,9 +57,9 @@ async function sendMessage() {
   <main>
     <input v-model="username" type="text" name="Your Username" maxLength="20" />
 
-    <div class="scrollable">
+    <div class="scrollable" ref="scrollableChat">
       <Suspense>
-        <ChatFrame :current-username="username" />
+        <ChatFrame :current-username="username" @scrollSuggestion="checkScroll" />
       </Suspense>
     </div>
     <textarea v-model="message"></textarea>
