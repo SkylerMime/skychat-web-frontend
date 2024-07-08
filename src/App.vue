@@ -1,13 +1,14 @@
 <script setup lang="ts">
 import ChatFrame from './components/ChatFrame.vue'
 import { ref } from 'vue'
-import { postMessageToApi, type ChatMessage, CURRENT_USER_NAME } from './api_helpers'
+import { postMessageToApi, type ChatMessage } from './api_helpers'
 
 const message = ref('')
+const username = ref('Alice')
 
 async function sendMessage() {
   const new_message: ChatMessage = {
-    username: CURRENT_USER_NAME,
+    username: username.value,
     message: message.value,
     datetime: new Date(),
   }
@@ -24,9 +25,11 @@ async function sendMessage() {
   </header>
 
   <main>
+    <input v-model="username" type="text" name="Your Username" maxLength="20" />
+
     <div class="scrollable">
       <Suspense>
-        <ChatFrame />
+        <ChatFrame :current-username="username" />
       </Suspense>
     </div>
     <textarea v-model="message"></textarea>

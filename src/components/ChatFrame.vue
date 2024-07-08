@@ -1,14 +1,10 @@
 <script setup lang="ts">
 import { onMounted, ref, type Ref } from 'vue'
 import ChatMessageBubble from './ChatMessageBubble.vue'
-import {
-  API_URL,
-  getAllPastMessagesFromApi,
-  CURRENT_USER_NAME,
-  type ChatMessage,
-} from '../api_helpers'
+import { API_URL, getAllPastMessagesFromApi, type ChatMessage } from '../api_helpers'
 
-// TODO: Rework to use Web Sockets instead of Suspense and async Fetch
+defineProps({ currentUsername: String })
+
 const messages: Ref<Array<ChatMessage>> = ref([])
 const retrievedMessages = await getAllPastMessagesFromApi()
 messages.value = retrievedMessages
@@ -50,7 +46,7 @@ messagesStream.onmessage = (newMessageEvent) => {
     <li v-for="message in messages" ref="messageRefs" :key="message.datetime.toString">
       <ChatMessageBubble
         :message="message"
-        :is_current_user="message.username == CURRENT_USER_NAME"
+        :is_current_user="message.username == currentUsername"
       />
     </li>
   </ul>
