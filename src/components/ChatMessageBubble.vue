@@ -33,7 +33,7 @@ defineProps<{
 
 .text.green {
   float: right;
-  background: #0084ff;
+  background: darkgreen;
   color: #fff;
 }
 </style>
